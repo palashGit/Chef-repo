@@ -1,0 +1,84 @@
+drwxr-xr-x 2 root root 4096 Mar 30 15:42 ./
+drwxr-xr-x 4 root root 4096 Mar 30 15:42 ../
+-rwxr-xr-x 1 root root  230 Mar 30 15:42 db-pod.yml*
+-rwxr-xr-x 1 root root  203 Mar 30 15:42 db-svc.yml*
+-rwxr-xr-x 1 root root  238 Mar 30 15:42 web-pod.yml*
+-rwxr-xr-x 1 root root  364 Mar 30 15:42 web-rc.yml*
+-rwxr-xr-x 1 root root  202 Mar 30 15:42 web-svc.yml*
+user@user-LIFEBOOK-AH532:~/k8slabs/kube-lab/Kubernetes$ cat *
+apiVersion: "v1"
+kind: Pod
+metadata:
+  name: redis
+  labels:
+    name: redis
+    app: demo
+spec:
+  containers:
+    - name: redis
+      image: redis:latest
+      ports:
+        - containerPort: 6379         
+          protocol: TCPapiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  labels:
+    name: redis
+    app: demo  
+spec:
+  ports:
+  - port: 6379
+    name: redis
+    targetPort: 6379
+  selector:
+    name: redis
+    app: demoapiVersion: "v1"
+kind: Pod
+metadata:
+  name: web
+  labels:
+    name: web
+    app: demo
+spec:
+  containers:
+    - name: web
+      image: janakiramm/web
+      ports:
+        - containerPort: 5000
+          name: http
+          protocol: TCPapiVersion: v1
+kind: ReplicationController
+metadata:
+  name: web
+  labels:
+    name: web
+    app: demo
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        name: web
+    spec:
+      containers:
+        - name: web
+          image: janakiramm/web
+          ports:
+            - containerPort: 5000
+              name: http
+              protocol: TCPapiVersion: v1
+kind: Service
+metadata:
+  name: web
+  labels:
+    name: web
+    app: demo
+spec:
+  selector:
+    name: web 
+  type: NodePort
+  ports:
+   - port: 80
+     targetPort: 5000
+     protocol: TCPuser@user-LIFEBOOK-AH532:~/k8slabs/kube-lab/Kubernetes$ 
